@@ -1,0 +1,667 @@
+/* Add at the beginning of the file */
+.animate-fade, .animate-title, .gallery-item {
+    opacity: 0;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #1a1a1a;
+    color: white;
+    overflow: hidden;
+    min-height: 100vh;
+    overflow-x: hidden;
+    height: 100vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+/* Custom scrollbar for Webkit browsers */
+body::-webkit-scrollbar {
+    width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+.loading {
+    overflow: hidden;
+}
+
+/* Navigation */
+.nav-buttons {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    z-index: 100;
+    background: linear-gradient(to bottom, rgba(26, 26, 26, 1) 0%, rgba(26, 26, 26, 0) 100%);
+}
+
+.nav-right {
+    display: flex;
+    gap: 1.8rem;
+    align-items: center;
+}
+
+.nav-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 0.85rem;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.5rem 0;
+    transition: opacity 0.3s ease;
+}
+
+.nav-left .nav-btn {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.hero {
+    height: 100vh;
+    width: 100%;
+    position: relative;
+    overflow: visible;
+    min-height: 100vh;
+    top: 0;
+    opacity: 1;
+    z-index: 3;
+}
+
+.hero:hover .gallery-item,
+.hero:hover .hero-title {
+    opacity: 0.1;
+    transition: all 0.5s ease;
+}
+
+/* Image hover effects */
+.hero.image-hovered .gallery-item:not(:hover) {
+    border: 1px solid rgba(255, 255, 255, 1); /* Full opacity */
+    background: #0c0c0c;
+    position: relative;
+}
+
+.hero.image-hovered .gallery-item:not(:hover)::before,
+.hero.text-hovered .gallery-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        linear-gradient(to top right, transparent 49.5%, #fff 49.8%, #fff 50.2%, transparent 50.5%),
+        linear-gradient(to bottom right, transparent 49.5%, #fff 49.8%, #fff 50.2%, transparent 50.5%);
+}
+
+.hero.image-hovered .gallery-item:not(:hover) img,
+.hero.text-hovered .gallery-item img {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.hero.image-hovered .hero-title {
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 1); /* Full opacity */
+    pointer-events: none;
+}
+
+/* Text hover effects */
+.hero.text-hovered .gallery-item {
+    border: 1px solid rgba(255, 255, 255, 1); /* Full opacity */
+    background: #0c0c0c;
+    position: relative;
+}
+
+.hero.text-hovered .gallery-item img {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.hero.text-hovered .hero-title:hover {
+    color: white;
+    -webkit-text-stroke: 0;
+}
+
+.hero-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 3;
+    width: 90%;
+    padding: 0 2rem;
+    pointer-events: none;
+}
+
+.hero-title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(3rem, 10vw, 8rem);
+    font-weight: 800;
+    text-align: center;
+    z-index: 1;
+    width: 90%;
+    color: white;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin: 0;
+    transition: all 0.5s ease;
+    pointer-events: none; /* Disable hover interactions */
+    opacity: 1 !important; /* Prevent dimming on hover */
+    opacity: 0;
+    transform-origin: left;
+    will-change: transform, opacity;
+}
+
+.gallery {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.25rem;
+    padding: 8.5rem 1rem 6rem;
+    z-index: 2;
+    overflow: visible; /* Allow content to overflow */
+    pointer-events: none; /* Add this */
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+.gallery-item {
+    position: relative;
+    overflow: visible; /* Allow content to overflow */
+    border-radius: 8px;
+    width: 460px;
+    height: 259px;
+    pointer-events: auto;
+    /* Remove default transition to prevent conflict with magnetic effect */
+    transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+    will-change: transform;
+    margin: 0 auto; /* Center items in their grid cells */
+    pointer-events: auto; /* Add this */
+    transform-style: preserve-3d; /* Add this */
+    isolation: isolate; /* Add this */
+    opacity: 0;
+}
+
+.gallery-item:hover {
+    opacity: 1 !important;
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    z-index: 3;
+}
+
+.gallery-item:hover ~ .gallery-item {
+    transform: none !important; /* Prevent sibling movement */
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block; /* Ensure proper image display */
+    transition: all 0.5s ease;
+}
+
+/* Add error state for debugging */
+.gallery-item img:not([src]), 
+.gallery-item img[src=""],
+.gallery-item img[src*="undefined"] {
+    display: none;
+}
+
+.gallery-item:nth-child(1) { transform: translateX(-20%) translateY(10%); }
+.gallery-item:nth-child(2) { transform: translateX(20%) translateY(-10%); }
+.gallery-item:nth-child(3) { transform: translateX(-30%) translateY(-20%); }
+.gallery-item:nth-child(4) { transform: translateX(30%) translateY(20%); }
+
+.cursor {
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    mix-blend-mode: difference;
+    z-index: 999;
+    transition: transform 0.2s ease;
+}
+
+.cursor-follower {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 998;
+    transition: transform 0.3s ease;
+}
+
+/* Animations */
+@keyframes float {
+    0%, 100% { transform: translate(var(--translateX, 0), var(--translateY, 0)); }
+    25% { transform: translate(calc(var(--translateX, 0) - 5px), calc(var(--translateY, 0) - 5px)); }
+    50% { transform: translate(calc(var(--translateX, 0) + 5px), calc(var(--translateY, 0) + 5px)); }
+    75% { transform: translate(calc(var(--translateX, 0) - 5px), calc(var(--translateY, 0) + 5px)); }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background: linear-gradient(45deg, #000, #1a1a1a);
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    opacity: 0;
+    animation: fadeIn 0.8s ease forwards 1s;
+}
+
+.image-gallery {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.image-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+    aspect-ratio: 16/9;
+}
+
+.image-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.image-card:hover {
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    transform: scale(1.05);
+}
+
+.image-card:hover img {
+    opacity: 0.7;
+    transform: scale(1.05);
+}
+
+.image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    padding: 2rem;
+    color: white;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.image-card:hover .image-overlay {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.hover-target {
+    cursor: none;
+}
+
+.hover-target:hover ~ .cursor {
+    transform: scale(3);
+}
+
+/* Remove debug text */
+.gallery-item::after {
+    content: none;
+}
+
+.outline-mode {
+    filter: brightness(0.2);
+    transition: filter 0.5s ease;
+}
+
+.outline-mode .gallery-item img,
+.outline-mode .hero-title,
+.outline-mode .hero-subtitle {
+    opacity: 0.1;
+}
+
+.gallery-item.active img {
+    filter: brightness(1);
+    opacity: 1 !important;
+}
+
+.hero-title.active,
+.hero-subtitle.active {
+    filter: brightness(1);
+    opacity: 1 !important;
+}
+
+.hero:not(:hover) .gallery-item,
+.hero:not(:hover) .hero-title {
+    opacity: 1; /* Ensure full opacity when nothing is hovered */
+}
+
+/* Only apply opacity changes when hovering */
+.hero.image-hovered .gallery-item:not(:hover) {
+    opacity: 0.1;
+    border: 1px solid rgba(255, 255, 255, 1);
+}
+
+.hero.image-hovered .hero-title {
+    opacity: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 1);
+}
+
+/* Add max-width to ensure responsiveness */
+@media (max-width: 1440px) {
+    .gallery-item {
+        width: 440px;
+        height: 248px;
+    }
+}
+
+.video-section {
+    position: absolute;
+    top: 100vh;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: #1a1a1a;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 2rem;
+    transition: opacity 0.5s ease-out;
+}
+
+.video-container {
+    position: relative;
+    width: 80%;
+    max-width: 1400px;
+    aspect-ratio: 16/9;
+    margin: 0 auto;
+}
+
+.background-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.language-transition {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100vh;
+    background-color: white;
+    z-index: 9999;
+    pointer-events: none;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.language-transition.active {
+    transform: translateX(100%);
+}
+
+.hover-text {
+    position: absolute;
+    bottom: -80px;
+    right: -40px;
+    width: auto;
+    max-width: 100%;
+    padding: 2rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+    color: white;
+    text-align: right;
+    z-index: 10;
+    pointer-events: none;
+    isolation: isolate; /* Add this */
+}
+
+.hover-text h3 {
+    font-size: 4rem;        /* Increased from 3.2rem */
+    font-weight: 800;
+    margin: 0 0 1rem 0;     /* Increased bottom margin */
+    letter-spacing: -0.02em;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.hover-text p {
+    font-size: 1.6rem;      /* Increased from 1.4rem */
+    opacity: 0.8;
+    margin: 0;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.gallery-item:hover .hover-text {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.letter-svg {
+    width: clamp(300px, 80vw, 800px);
+    height: auto;
+}
+
+.letter {
+    fill: none;
+    stroke: white;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+}
+
+section {
+    position: relative;
+    min-height: 100vh;
+    width: 100vw;
+    will-change: transform;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    z-index: 1000;
+}
+
+.nav-items {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.nav-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.nav-btn:hover {
+    opacity: 0.7;
+}
+
+/* Check for any unwanted language switch related styles */
+.lang-switch {
+    /* Keep only the styles for the navbar language switch */
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.2rem;
+    transition: opacity 0.3s ease;
+}
+
+.lang-switch:hover {
+    opacity: 1;
+}
+
+#langSwitch {
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+    padding: 0.5rem 0;
+    font-size: 0.9rem;  /* Decreased size */
+    margin-left: 1rem;  /* Extra spacing for language switch */
+}
+
+#langSwitch.en-active::before {
+    content: none;
+    text-decoration: none;
+}
+
+#langSwitch.en-active::after {
+    content: none;
+    text-decoration: none;
+}
+
+#langSwitch.fr-active::before {
+    content: none;
+    text-decoration: none;
+}
+
+#langSwitch.fr-active::after {
+    content: none;
+    text-decoration: none;
+}
+
+.nav-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 0.9rem;  /* Decreased size */
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.5rem 0;
+    transition: opacity 0.3s ease;
+}
+
+.nav-left .nav-btn {
+    font-size: 1.1rem;  /* Logo size */
+    font-weight: 700;
+}
+
+/* Remove any hover effects from nav buttons */
+.hero.image-hovered .nav-btn,
+.hero.text-hovered .nav-btn {
+    opacity: 0.7;
+    color: white;
+    -webkit-text-stroke: 0;
+}
+
+.hero:not(.image-hovered) .gallery-item,
+.hero.not(.image-hovered) .hero-title {
+    opacity: 1; /* Ensure full opacity when nothing is hovered */
+}
+
+/* Only apply opacity changes when hovering */
+.hero.image-hovered .gallery-item:not(:hover) {
+    opacity: 0.1;
+    border: 1px solid rgba(255, 255, 255, 1);
+}
+
+.hero.image-hovered .hero-title {
+    opacity: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 1);
+}
+
+.nav-buttons {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    z-index: 100;
+    background: linear-gradient(to bottom, rgba(26, 26, 26, 1) 0%, rgba(26, 26, 26, 0) 100%);
+}
+
+.nav-right {
+    display: flex;
+    gap: 2rem;  /* Adjusted gap */
+    align-items: center;
+}

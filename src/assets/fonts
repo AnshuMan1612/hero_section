@@ -1,0 +1,13 @@
+hero-website
+├── src
+│   ├── assets
+│   │   └── fonts
+│   ├── css
+│   │   ├── styles.css
+│   │   └── reset.css
+│   ├── js
+│   │   ├── animations.js
+│   │   └── main.js
+│   └── index.html
+├── .gitignore
+└── README.md
